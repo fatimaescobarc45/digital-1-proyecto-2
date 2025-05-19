@@ -1,9 +1,9 @@
 #include <Servo.h>
 
-const int pot1 = A0;
-const int pot2 = A1;
-const int pot3 = A2;
-const int pot4 = A3;
+const int pot1 = A2;
+const int pot2 = A3;
+const int pot3 = A4;
+const int pot4 = A5;
 
 const int sw = 9;
 const int pb1 = 4;
@@ -24,10 +24,10 @@ int angulo4a = 0;
 void setup() {
   Serial.begin(9600);
 
-  A.attach(8);
-  B.attach(7);
+  A.attach(10);
+  B.attach(8);
   C.attach(6);
-  D.attach(5);
+  D.attach(4);
   pinMode(sw, INPUT);
   pinMode(pb1, INPUT);
   pinMode(pb2, INPUT);
