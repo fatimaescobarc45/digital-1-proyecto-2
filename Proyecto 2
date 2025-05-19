@@ -11,7 +11,7 @@ const int pb2 = 3;
 
 Servo A;
 Servo B;
-Servo C;
+Servo C;  
 Servo D;
 
 int pos[] = {0, 45, 90, 180};
@@ -37,7 +37,7 @@ void setup() {
 //Modo manual
 void loop() {
   // mueve izquierdo y derecho
-  int valPot1 = analogRead(pot1);
+  int valPot1 = analogRead(pot2);
   int angulo1 = map(valPot1, 0, 1023, 0, 180);
 
   //int valPot2 = valPot1;
