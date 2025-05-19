@@ -39,8 +39,8 @@ void loop() {
   int valPot1 = analogRead(pot1);
   int angulo1 = map(valPot1, 0, 1023, 0, 180);
 
-  int valPot2 = analogRead(pot2);
-  int angulo2 = map(valPot2, 0, 1023, 0, 180);
+  int valPot2 = valPot1;
+  int angulo2 = angulo1;
 
   int valPot3 = analogRead(pot3);
   int angulo3 = map(valPot3, 0, 1023, 0, 180);
