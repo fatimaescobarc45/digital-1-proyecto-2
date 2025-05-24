@@ -1,1 +1,83 @@
 # digital-1-proyecto-2
+
+#include <Servo.h>
+
+const int pot1 = A2;
+const int pot2 = A3;
+const int pot3 = A4;
+const int pot4 = A5;
+
+const int sw = 9;
+const int pb1 = 4;
+const int pb2 = 3;
+
+Servo A;
+Servo B;
+Servo C;  
+Servo D;
+
+int pos[] = {0, 45, 90, 180};
+int pActual = 0;
+int angulo1a = 0;
+int angulo2a = 0;
+int angulo3a = 0;
+int angulo4a = 0;
+
+void setup() {
+  Serial.begin(9600);
+
+  A.attach(10);
+  B.attach(8);
+  C.attach(6);
+  D.attach(4);
+  pinMode(sw, INPUT);
+  pinMode(pb1, INPUT);
+  pinMode(pb2, INPUT);
+
+}
+
+//Modo manual
+void loop() {
+  // mueve izquierdo y derecho
+  int valPot1 = analogRead(pot2);
+  int angulo1 = map(valPot1, 0, 1023, 0, 180);
+
+  //int valPot2 = valPot1;
+  //int angulo2 = angulo1;
+
+  int valPot3 = analogRead(pot3);
+  int angulo3 = map(valPot3, 0, 1023, 0, 180);
+
+  int valPot4 = analogRead(pot4);
+  int angulo4 = map(valPot4, 0, 1023, 0, 180);
+  
+    Serial.println(); Serial.println(); Serial.println();Serial.println(); Serial.println();Serial.println(); Serial.println();
+    A.write(angulo1);
+    B.write(angulo1);
+    Serial.print("Angulo del servo 1 y 2: ");
+    Serial.print(angulo1);
+    Serial.println("°");
+    
+    
+    C.write(angulo3);
+    Serial.print("Angulo del servo 3: ");
+    Serial.print(angulo3);
+    Serial.println("°");
+    
+    D.write(angulo4);
+    Serial.print("Angulo del servo 4: ");
+    Serial.print(angulo4);
+    Serial.println("°");
+    delay(100);
+
+}
+/*
+void modoAutomatico(){
+
+  bool btnNext = !digitalRead(pb1);
+  bool btnPrev = !digitalRead(pb2);
+
+  if(btnNext && !prevPB1);
+  
+}
+*/
