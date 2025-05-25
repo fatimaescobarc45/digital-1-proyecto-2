@@ -7,6 +7,8 @@ const int pot3 = A2;
 const int sw = 9;
 const int pb1 = 4;
 const int pb2 = 3;
+const int pb3 = 2; 
+
 const int lManual = 10;
 const int sw2 = 11;
 const int lAuto = 12;
@@ -40,6 +42,7 @@ void setup() {
   pinMode(sw2, INPUT);
   pinMode(pb1, INPUT);
   pinMode(pb2, INPUT);
+  pinMode(pb3, INPUT);
 
   pinMode(lManual, OUTPUT);
   pinMode(lAuto, OUTPUT);
@@ -95,6 +98,11 @@ void manual() {
     lastAng2 = ang2;
     lastAng3 = ang3;
     lastAng4 = ang4;
+
+    if(digitalRead(pb3)){
+      modoRPS();  
+    }
+    
   }
 
   A.write(ang1);
@@ -146,4 +154,24 @@ void mostrarAngulos(int a, int b, int c, int d) {
     d1 = d;
   }
 }
+
+void modoRPS(){
+int decision = random(0,3);
+
+  for(int i = 0; i<3; i++){
+    B.write(0);
+    C.write(0);
+    delay(500);
+    B.write(180);
+    C.write(180);
+    if(i==2){
+      rps = decision*90;
+      D.write(rps);
+    }
+    delay(500);
+  }
+
+  
+}
+
 
