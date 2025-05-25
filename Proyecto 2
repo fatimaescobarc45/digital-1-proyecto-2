@@ -1,81 +1,149 @@
 #include <Servo.h>
 
-const int pot1 = A2;
-const int pot2 = A3;
-const int pot3 = A4;
-const int pot4 = A5;
+const int pot1 = A0;
+const int pot2 = A1;
+const int pot3 = A2;
 
 const int sw = 9;
 const int pb1 = 4;
 const int pb2 = 3;
+const int lManual = 10;
+const int sw2 = 11;
+const int lAuto = 12;
 
-Servo A;
-Servo B;
-Servo C;  
-Servo D;
+Servo A, B, C, D;
 
-int pos[] = {0, 45, 90, 180};
 int pActual = 0;
-int angulo1a = 0;
-int angulo2a = 0;
-int angulo3a = 0;
-int angulo4a = 0;
+bool prevpb1 = false;
+bool prevpb2 = false;
 
+
+int pasos[5][4] = {
+  {0, 45, 135, 135},
+  {45, 90, 90, 180},
+  {90, 135, 45, 90},
+  {135, 180, 0, 0},
+  {60, 120, 60, 30}
+};
+
+int lastAng1 = -1, lastAng2 = -1, lastAng3 = -1, lastAng4 = -1;
+int a1 = 0, b1 = 0, c1 = 0, d1 = 0;
 void setup() {
   Serial.begin(9600);
 
-  A.attach(10);
-  B.attach(8);
+  A.attach(8);
+  B.attach(7);
   C.attach(6);
-  D.attach(4);
+  D.attach(5);
+
   pinMode(sw, INPUT);
+  pinMode(sw2, INPUT);
   pinMode(pb1, INPUT);
   pinMode(pb2, INPUT);
 
+  pinMode(lManual, OUTPUT);
+  pinMode(lAuto, OUTPUT);
+}
+
+void loop() {
+  bool modoManual = digitalRead(sw); 
+  digitalWrite(lManual, modoManual);
+  digitalWrite(lAuto, !modoManual);
+
+  if (modoManual) {
+    manual();
+  } else {
+    automatico();
+  }
+
+  
 }
 
 //Modo manual
-void loop() {
-  // mueve izquierdo y derecho
-  int valPot1 = analogRead(pot2);
-  int angulo1 = map(valPot1, 0, 1023, 0, 180);
+void manual() {
+  int valPot1 = analogRead(pot1);
+  int ang1 = map(valPot1, 0, 1023, 0, 180);
 
-  //int valPot2 = valPot1;
-  //int angulo2 = angulo1;
+  int valPot2 = analogRead(pot2);
+  int ang2 = map(valPot2, 0, 1023, 0, 180);
 
-  int valPot3 = analogRead(pot3);
-  int angulo3 = map(valPot3, 0, 1023, 0, 180);
+  int valPot3 = analogRead(pot2);
+  int ang3 = 180 - ang2;
 
-  int valPot4 = analogRead(pot4);
-  int angulo4 = map(valPot4, 0, 1023, 0, 180);
-  
-    Serial.println(); Serial.println(); Serial.println();Serial.println(); Serial.println();Serial.println(); Serial.println();
-    A.write(angulo1);
-    B.write(angulo1);
-    Serial.print("Angulo del servo 1 y 2: ");
-    Serial.print(angulo1);
-    Serial.println("°");
-    
-    
-    C.write(angulo3);
-    Serial.print("Angulo del servo 3: ");
-    Serial.print(angulo3);
-    Serial.println("°");
-    
-    D.write(angulo4);
-    Serial.print("Angulo del servo 4: ");
-    Serial.print(angulo4);
-    Serial.println("°");
-    delay(100);
+  int valPot4 = analogRead(pot3);
+  int ang4 = map(valPot4, 0, 1023, 0, 180);
 
+
+  if (ang1 != lastAng1 || ang2 != lastAng2 || ang3 != lastAng3 || ang4 != lastAng4) {
+    Serial.println("\n\n Posiciones:");
+
+    if (ang1 > 0) {
+      Serial.print("Servo A: "); Serial.print(ang1); Serial.println("°");
+    }
+    if (ang2 > 0) {
+      Serial.print("Servo B: "); Serial.print(ang2); Serial.println("°");
+    }
+    if (ang3 > 0) {
+      Serial.print("Servo C: "); Serial.print(ang3); Serial.println("°");
+    }
+    if (ang4 > 0) {
+      Serial.print("Servo D: "); Serial.print(ang4); Serial.println("°");
+    }
+
+    // Guardar estado anterior
+    lastAng1 = ang1;
+    lastAng2 = ang2;
+    lastAng3 = ang3;
+    lastAng4 = ang4;
+  }
+
+  A.write(ang1);
+  B.write(ang2);
+  C.write(ang3);
+  D.write(ang4);
 }
-/*
-void modoAutomatico(){
 
+//Modo automático 
+void automatico() {
   bool btnNext = !digitalRead(pb1);
   bool btnPrev = !digitalRead(pb2);
+ 
+  if (btnNext != prevpb1) {
+    pActual = (pActual + 1) % 5;
+    prevpb1 = btnNext;
+    cambiaServo();
+    Serial.println("\nAvanzando...");
+  }
 
-  if(btnNext && !prevPB1);
-  
+  if (btnPrev != prevpb2) {
+    pActual = (pActual - 1 + 5) % 5;
+    prevpb2 = btnPrev;
+    cambiaServo();
+    Serial.println("\nRetrocediendo...");
+  }
+
+  mostrarAngulos(pasos[pActual][0], pasos[pActual][1], pasos[pActual][2], pasos[pActual][3]);
 }
-*/
+
+void cambiaServo() {
+   A.write(pasos[pActual][0]);
+  B.write(pasos[pActual][1]);
+  C.write(pasos[pActual][2]);
+  D.write(pasos[pActual][3]);
+
+}
+
+void mostrarAngulos(int a, int b, int c, int d) {
+  if (a != a1 || b != b1 || c != c1 || d != d1) {
+    Serial.println("\n\n Posición automática ");
+    Serial.print("Servo A: "); Serial.print(a); Serial.println("°");
+    Serial.print("Servo B: "); Serial.print(b); Serial.println("°");
+    Serial.print("Servo C: "); Serial.print(c); Serial.println("°");
+    Serial.print("Servo D: "); Serial.print(d); Serial.println("°");
+    a1 = a;
+    b1 = b;
+    c1 = c;
+    d1 = d;
+  }
+}
+
